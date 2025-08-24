@@ -30,12 +30,14 @@ spec:
         name: {{ .Release.Name }}
         env:
         - name: SERVER_NAME
-          value: {{ .Values.serverName }}
+          value: {{ .Values.serverName | quote }}
         - name: WORLD_NAME
-          value: {{ .Values.worldName }}
+          value: {{ .Values.worldName | quote }}
+{{- if .Values.env }}
 {{- range $k, $v := .Values.env }}
         - name: {{ $k }}
           value: {{ $v | quote }}
+{{- end }}
 {{- end }}
         {{ if .Values.passwordSecret -}}
         - name: SERVER_PASS
@@ -62,8 +64,10 @@ spec:
         ports:
         - containerPort: {{ .Values.networking.gamePort | int }}
           name: gameport
+          protocol: UDP
         - containerPort: {{ .Values.networking.gamePort | int | add 1 }}
           name: queryport
+          protocol: UDP
         volumeMounts:
         {{ if .Values.storage.kind }}
         - mountPath: /config
