@@ -33,6 +33,10 @@ spec:
           value: {{ .Values.serverName }}
         - name: WORLD_NAME
           value: {{ .Values.worldName }}
+{{- range $k, $v := .Values.env }}
+        - name: {{ $k }}
+          value: {{ $v | quote }}
+{{- end }}
         {{ if .Values.passwordSecret -}}
         - name: SERVER_PASS
           valueFrom:
